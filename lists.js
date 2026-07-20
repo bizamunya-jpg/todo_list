@@ -1,164 +1,15 @@
 (function() {
     "use strict";
 
-    const authContainer = document.getElementById("authContainer");
     const input = document.getElementById("taskinput");
     const addBtn = document.getElementById("addBtn");
     const taskList = document.getElementById("tasklist");
     const inputRow = document.querySelector(".input-row");
     const tasks = [];
-    let currentUser = "";
 
-    showLoginView();
-
-    function showLoginView() {
-        if (!authContainer) {
-            return;
-        }
-
-        authContainer.innerHTML = "";
-        setTodoVisibility(false);
-
-        const heading = document.createElement("h2");
-        heading.textContent = "Login";
-
-        const form = document.createElement("form");
-        form.className = "auth-form";
-        form.addEventListener("submit", (event) => {
-            event.preventDefault();
-
-            const username = form.querySelector("#username").value.trim();
-            const password = form.querySelector("#password").value.trim();
-
-            if (!username || !password) {
-                alert("Please enter both your username and password.");
-                return;
-            }
-
-            currentUser = username;
-            showTodoView();
-        });
-
-        const usernameLabel = document.createElement("label");
-        usernameLabel.textContent = "Username";
-        usernameLabel.setAttribute("for", "username");
-
-        const usernameInput = document.createElement("input");
-        usernameInput.type = "text";
-        usernameInput.id = "username";
-        usernameInput.name = "username";
-        usernameInput.required = true;
-
-        const passwordLabel = document.createElement("label");
-        passwordLabel.textContent = "Password";
-        passwordLabel.setAttribute("for", "password");
-
-        const passwordInput = document.createElement("input");
-        passwordInput.type = "password";
-        passwordInput.id = "password";
-        passwordInput.name = "password";
-        passwordInput.required = true;
-
-        const submitBtn = document.createElement("button");
-        submitBtn.type = "submit";
-        submitBtn.textContent = "Log in";
-
-        const registerBtn = document.createElement("button");
-        registerBtn.type = "button";
-        registerBtn.className = "register-btn";
-        registerBtn.textContent = "Create account";
-        registerBtn.addEventListener("click", showRegistrationView);
-
-        form.append(usernameLabel, usernameInput, passwordLabel, passwordInput, submitBtn);
-        authContainer.append(heading, form, registerBtn);
-    }
-
-    function showRegistrationView() {
-        if (!authContainer) {
-            return;
-        }
-
-        authContainer.innerHTML = "";
-        setTodoVisibility(false);
-
-        const heading = document.createElement("h2");
-        heading.textContent = "Register";
-
-        const form = document.createElement("form");
-        form.className = "auth-form";
-        form.addEventListener("submit", (event) => {
-            event.preventDefault();
-
-            const fullName = form.querySelector("#fullName").value.trim();
-            const username = form.querySelector("#regUsername").value.trim();
-            const password = form.querySelector("#regPassword").value.trim();
-
-            if (!fullName || !username || !password) {
-                alert("Please fill in all registration fields.");
-                return;
-            }
-
-            currentUser = username;
-            showTodoView();
-        });
-
-        const fullNameLabel = document.createElement("label");
-        fullNameLabel.textContent = "Full name";
-        fullNameLabel.setAttribute("for", "fullName");
-
-        const fullNameInput = document.createElement("input");
-        fullNameInput.type = "text";
-        fullNameInput.id = "fullName";
-        fullNameInput.name = "fullName";
-        fullNameInput.required = true;
-
-        const usernameLabel = document.createElement("label");
-        usernameLabel.textContent = "Username";
-        usernameLabel.setAttribute("for", "regUsername");
-
-        const usernameInput = document.createElement("input");
-        usernameInput.type = "text";
-        usernameInput.id = "regUsername";
-        usernameInput.name = "regUsername";
-        usernameInput.required = true;
-
-        const passwordLabel = document.createElement("label");
-        passwordLabel.textContent = "Password";
-        passwordLabel.setAttribute("for", "regPassword");
-
-        const passwordInput = document.createElement("input");
-        passwordInput.type = "password";
-        passwordInput.id = "regPassword";
-        passwordInput.name = "regPassword";
-        passwordInput.required = true;
-
-        const submitBtn = document.createElement("button");
-        submitBtn.type = "submit";
-        submitBtn.textContent = "Register";
-
-        const backBtn = document.createElement("button");
-        backBtn.type = "button";
-        backBtn.textContent = "Back to login";
-        backBtn.addEventListener("click", showLoginView);
-
-        form.append(fullNameLabel, fullNameInput, usernameLabel, usernameInput, passwordLabel, passwordInput, submitBtn);
-        authContainer.append(heading, form, backBtn);
-    }
-
-    function showTodoView() {
-        if (!authContainer) {
-            return;
-        }
-
-        authContainer.innerHTML = "";
-        const welcome = document.createElement("p");
-        welcome.className = "welcome";
-        welcome.textContent = `Welcome, ${currentUser}!`;
-        authContainer.appendChild(welcome);
-
-        setTodoVisibility(true);
-        renderTasks();
-    }
+    window.app = window.app || {};
+    window.app.currentUser = "";
+    window.app.tasks = tasks;
 
     function setTodoVisibility(isVisible) {
         if (inputRow) {
@@ -242,6 +93,22 @@
         renderTasks();
     }
 
+    function showTodoView() {
+        const authContainer = document.getElementById("authContainer");
+        if (!authContainer) {
+            return;
+        }
+
+        authContainer.innerHTML = "";
+        const welcome = document.createElement("p");
+        welcome.className = "welcome";
+        welcome.textContent = `Welcome, ${window.app.currentUser}!`;
+        authContainer.appendChild(welcome);
+
+        setTodoVisibility(true);
+        renderTasks();
+    }
+
     if (addBtn) {
         addBtn.addEventListener("click", addTask);
     }
@@ -254,4 +121,8 @@
             }
         });
     }
+
+    window.app.showTodoView = showTodoView;
+    window.app.setTodoVisibility = setTodoVisibility;
+    window.app.renderTasks = renderTasks;
 })();
