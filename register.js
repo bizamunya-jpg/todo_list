@@ -1,0 +1,85 @@
+(function() {
+    "use strict";
+
+    const authContainer = document.getElementById("authContainer");
+
+    function showRegistrationView() {
+        if (!authContainer) {
+            return;
+        }
+
+        authContainer.innerHTML = "";
+
+        const heading = document.createElement("h2");
+        heading.textContent = "Register";
+
+        const form = document.createElement("form");
+        form.className = "auth-form";
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const fullName = form.querySelector("#fullName").value.trim();
+            const username = form.querySelector("#regUsername").value.trim();
+            const password = form.querySelector("#regPassword").value.trim();
+
+            if (!fullName || !username || !password) {
+                alert("Please fill in all registration fields.");
+                return;
+            }
+
+            if (window.app && typeof window.app.showTodoView === "function") {
+                window.app.currentUser = username;
+                window.app.showTodoView();
+            }
+        });
+
+        const fullNameLabel = document.createElement("label");
+        fullNameLabel.textContent = "Full name";
+        fullNameLabel.setAttribute("for", "fullName");
+
+        const fullNameInput = document.createElement("input");
+        fullNameInput.type = "text";
+        fullNameInput.id = "fullName";
+        fullNameInput.name = "fullName";
+        fullNameInput.required = true;
+
+        const usernameLabel = document.createElement("label");
+        usernameLabel.textContent = "Username";
+        usernameLabel.setAttribute("for", "regUsername");
+
+        const usernameInput = document.createElement("input");
+        usernameInput.type = "text";
+        usernameInput.id = "regUsername";
+        usernameInput.name = "regUsername";
+        usernameInput.required = true;
+
+        const passwordLabel = document.createElement("label");
+        passwordLabel.textContent = "Password";
+        passwordLabel.setAttribute("for", "regPassword");
+
+        const passwordInput = document.createElement("input");
+        passwordInput.type = "password";
+        passwordInput.id = "regPassword";
+        passwordInput.name = "regPassword";
+        passwordInput.required = true;
+
+        const submitBtn = document.createElement("button");
+        submitBtn.type = "submit";
+        submitBtn.textContent = "Register";
+
+        const backBtn = document.createElement("button");
+        backBtn.type = "button";
+        backBtn.textContent = "Back to login";
+        backBtn.addEventListener("click", () => {
+            if (window.app && typeof window.app.showLoginView === "function") {
+                window.app.showLoginView();
+            }
+        });
+
+        form.append(fullNameLabel, fullNameInput, usernameLabel, usernameInput, passwordLabel, passwordInput, submitBtn);
+        authContainer.append(heading, form, backBtn);
+    }
+
+    window.app = window.app || {};
+    window.app.showRegistrationView = showRegistrationView;
+})();
