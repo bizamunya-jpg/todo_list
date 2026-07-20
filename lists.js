@@ -4,9 +4,33 @@
     const input = document.getElementById("taskinput");
     const addBtn = document.getElementById("addBtn");
     const taskList = document.getElementById("tasklist");
+    const inputRow = document.querySelector(".input-row");
     const tasks = [];
 
+    window.app = window.app || {};
+    window.app.currentUser = "";
+    window.app.tasks = tasks;
+
+    function setTodoVisibility(isVisible) {
+        if (inputRow) {
+            inputRow.style.display = isVisible ? "flex" : "none";
+        }
+        if (taskList) {
+            taskList.style.display = isVisible ? "block" : "none";
+        }
+        if (input) {
+            input.disabled = !isVisible;
+        }
+        if (addBtn) {
+            addBtn.disabled = !isVisible;
+        }
+    }
+
     function renderTasks() {
+        if (!taskList) {
+            return;
+        }
+
         taskList.innerHTML = "";
 
         tasks.forEach((task, index) => {
@@ -53,6 +77,10 @@
     }
 
     function addTask() {
+        if (!input) {
+            return;
+        }
+
         const value = input.value.trim();
 
         if (!value) {
@@ -65,14 +93,36 @@
         renderTasks();
     }
 
-    addBtn.addEventListener("click", addTask);
-
-    input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            addTask();
+    function showTodoView() {
+        const authContainer = document.getElementById("authContainer");
+        if (!authContainer) {
+            return;
         }
-    });
 
-    renderTasks();
+        authContainer.innerHTML = "";
+        const welcome = document.createElement("p");
+        welcome.className = "welcome";
+        welcome.textContent = `Welcome, ${window.app.currentUser}!`;
+        authContainer.appendChild(welcome);
+
+        setTodoVisibility(true);
+        renderTasks();
+    }
+
+    if (addBtn) {
+        addBtn.addEventListener("click", addTask);
+    }
+
+    if (input) {
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                addTask();
+            }
+        });
+    }
+
+    window.app.showTodoView = showTodoView;
+    window.app.setTodoVisibility = setTodoVisibility;
+    window.app.renderTasks = renderTasks;
 })();
