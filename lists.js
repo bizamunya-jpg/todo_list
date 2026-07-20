@@ -11,6 +11,17 @@
     window.app.currentUser = "";
     window.app.tasks = tasks;
 
+    function setAccessToken(token) {
+        window.app.accessToken = token;
+        if (typeof window.localStorage !== "undefined") {
+            if (token) {
+                window.localStorage.setItem("todoAccessToken", token);
+            } else {
+                window.localStorage.removeItem("todoAccessToken");
+            }
+        }
+    }
+
     function setTodoVisibility(isVisible) {
         if (inputRow) {
             inputRow.style.display = isVisible ? "flex" : "none";
@@ -127,4 +138,5 @@
     window.app.showTodoView = showTodoView;
     window.app.setTodoVisibility = setTodoVisibility;
     window.app.renderTasks = renderTasks;
+    window.app.setAccessToken = setAccessToken;
 })();

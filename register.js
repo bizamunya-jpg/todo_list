@@ -18,30 +18,38 @@
         form.addEventListener("submit", (event) => {
             event.preventDefault();
 
-            const fullName = form.querySelector("#fullName").value.trim();
+            const email = form.querySelector("#email").value.trim();
             const username = form.querySelector("#regUsername").value.trim();
             const password = form.querySelector("#regPassword").value.trim();
 
-            if (!fullName || !username || !password) {
+            if (!email || !username || !password) {
                 alert("Please fill in all registration fields.");
                 return;
             }
 
             if (window.app && typeof window.app.showTodoView === "function") {
                 window.app.currentUser = username;
+                const token = `token-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+                window.app.accessToken = token;
+                if (typeof window.localStorage !== "undefined") {
+                    window.localStorage.setItem("todoAccessToken", token);
+                }
+                if (typeof window.app.setAccessToken === "function") {
+                    window.app.setAccessToken(token);
+                }
                 window.app.showTodoView();
             }
         });
 
-        const fullNameLabel = document.createElement("label");
-        fullNameLabel.textContent = "Full name";
-        fullNameLabel.setAttribute("for", "fullName");
+        const emailLabel = document.createElement("label");
+        emailLabel.textContent = "Email";
+        emailLabel.setAttribute("for", "email");
 
-        const fullNameInput = document.createElement("input");
-        fullNameInput.type = "text";
-        fullNameInput.id = "fullName";
-        fullNameInput.name = "fullName";
-        fullNameInput.required = true;
+        const emailInput = document.createElement("input");
+        emailInput.type = "text";
+        emailInput.id = "email";
+        emailInput.name = "email";
+        emailInput.required = true;
 
         const usernameLabel = document.createElement("label");
         usernameLabel.textContent = "Username";
@@ -76,7 +84,7 @@
             }
         });
 
-        form.append(fullNameLabel, fullNameInput, usernameLabel, usernameInput, passwordLabel, passwordInput, submitBtn);
+        form.append(emailLabel, emailInput, usernameLabel, usernameInput, passwordLabel, passwordInput, submitBtn);
         authContainer.append(heading, form, backBtn);
     }
 

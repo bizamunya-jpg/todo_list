@@ -28,6 +28,14 @@
 
             if (window.app && typeof window.app.showTodoView === "function") {
                 window.app.currentUser = username;
+                const token = `token-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+                window.app.accessToken = token;
+                if (typeof window.localStorage !== "undefined") {
+                    window.localStorage.setItem("todoAccessToken", token);
+                }
+                if (typeof window.app.setAccessToken === "function") {
+                    window.app.setAccessToken(token);
+                }
                 window.app.showTodoView();
             }
         });
