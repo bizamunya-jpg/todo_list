@@ -109,6 +109,8 @@
         renderTasks();
     }
 
+    setTodoVisibility(false);
+
     if (addBtn) {
         addBtn.addEventListener("click", addTask);
     }

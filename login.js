@@ -72,4 +72,5 @@
 
     window.app = window.app || {};
     window.app.showLoginView = showLoginView;
+    showLoginView();
 })();
