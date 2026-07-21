@@ -3,6 +3,20 @@
 
     const authContainer = document.getElementById("authContainer");
 
+    function getStoredUsers() {
+        if (typeof window.localStorage === "undefined") {
+            return {};
+        }
+
+        try {
+            const storedUsers = window.localStorage.getItem("todoUsers");
+            return storedUsers ? JSON.parse(storedUsers) : {};
+        } catch (error) {
+            console.error("Unable to read stored users", error);
+            return {};
+        }
+    }
+
     function showLoginView() {
         if (!authContainer) {
             return;
@@ -23,6 +37,14 @@
 
             if (!username || !password) {
                 alert("Please enter both your username and password.");
+                return;
+            }
+
+            const storedUsers = getStoredUsers();
+            const storedUser = storedUsers[username];
+
+            if (!storedUser || storedUser.password !== password) {
+                alert("Invalid username or password.");
                 return;
             }
 

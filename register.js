@@ -3,6 +3,30 @@
 
     const authContainer = document.getElementById("authContainer");
 
+    function getStoredUsers() {
+        if (typeof window.localStorage === "undefined") {
+            return {};
+        }
+
+        try {
+            const storedUsers = window.localStorage.getItem("todoUsers");
+            return storedUsers ? JSON.parse(storedUsers) : {};
+        } catch (error) {
+            console.error("Unable to read stored users", error);
+            return {};
+        }
+    }
+
+    function saveUsers(users) {
+        if (typeof window.localStorage !== "undefined") {
+            window.localStorage.setItem("todoUsers", JSON.stringify(users));
+        }
+    }
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
     function showRegistrationView() {
         if (!authContainer) {
             return;
@@ -26,6 +50,20 @@
                 alert("Please fill in all registration fields.");
                 return;
             }
+
+            if (!isValidEmail(email)) {
+                alert("Please enter a valid email address in the format example@example.com.");
+                return;
+            }
+
+            const storedUsers = getStoredUsers();
+            if (storedUsers[username]) {
+                alert("That username is already taken.");
+                return;
+            }
+
+            storedUsers[username] = { email, password };
+            saveUsers(storedUsers);
 
             if (window.app && typeof window.app.showTodoView === "function") {
                 if (typeof window.app.setCurrentUser === "function") {
