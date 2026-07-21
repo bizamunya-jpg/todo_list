@@ -6,6 +6,11 @@
     const taskList = document.getElementById("tasklist");
     const inputRow = document.querySelector(".input-row");
     const tasks = [];
+    const storageKeys = {
+        tasks: "todoTasks",
+        currentUser: "todoCurrentUser",
+        accessToken: "todoAccessToken"
+    };
 
     window.app = window.app || {};
     window.app.currentUser = "";
@@ -15,11 +20,58 @@
         window.app.accessToken = token;
         if (typeof window.localStorage !== "undefined") {
             if (token) {
-                window.localStorage.setItem("todoAccessToken", token);
+                window.localStorage.setItem(storageKeys.accessToken, token);
             } else {
-                window.localStorage.removeItem("todoAccessToken");
+                window.localStorage.removeItem(storageKeys.accessToken);
             }
         }
+    }
+
+    function setCurrentUser(username) {
+        window.app.currentUser = username || "";
+        if (typeof window.localStorage !== "undefined") {
+            if (window.app.currentUser) {
+                window.localStorage.setItem(storageKeys.currentUser, window.app.currentUser);
+            } else {
+                window.localStorage.removeItem(storageKeys.currentUser);
+            }
+        }
+    }
+
+    function saveTasks() {
+        if (typeof window.localStorage !== "undefined") {
+            try {
+                window.localStorage.setItem(storageKeys.tasks, JSON.stringify(tasks));
+            } catch (error) {
+                console.error("Unable to save tasks", error);
+            }
+        }
+    }
+
+    function loadTasks() {
+        if (typeof window.localStorage !== "undefined") {
+            try {
+                const storedTasks = window.localStorage.getItem(storageKeys.tasks);
+                if (storedTasks) {
+                    const parsedTasks = JSON.parse(storedTasks);
+                    if (Array.isArray(parsedTasks)) {
+                        tasks.splice(0, tasks.length, ...parsedTasks);
+                    }
+                }
+            } catch (error) {
+                console.error("Unable to load tasks", error);
+            }
+        }
+    }
+
+    function restoreSession() {
+        if (typeof window.localStorage !== "undefined") {
+            const storedUser = window.localStorage.getItem(storageKeys.currentUser);
+            if (storedUser) {
+                window.app.currentUser = storedUser;
+            }
+        }
+        loadTasks();
     }
 
     function setTodoVisibility(isVisible) {
@@ -55,6 +107,7 @@
             checkbox.checked = task.completed;
             checkbox.addEventListener("change", () => {
                 tasks[index].completed = checkbox.checked;
+                saveTasks();
                 renderTasks();
             });
 
@@ -70,6 +123,7 @@
                     const trimmedText = updatedText.trim();
                     if (trimmedText) {
                         tasks[index].text = trimmedText;
+                        saveTasks();
                         renderTasks();
                     }
                 }
@@ -79,6 +133,7 @@
             deleteBtn.textContent = "Delete";
             deleteBtn.addEventListener("click", () => {
                 tasks.splice(index, 1);
+                saveTasks();
                 renderTasks();
             });
 
@@ -100,6 +155,7 @@
         }
 
         tasks.push({ text: value, completed: false });
+        saveTasks();
         input.value = "";
         renderTasks();
     }
@@ -120,6 +176,7 @@
         renderTasks();
     }
 
+    restoreSession();
     setTodoVisibility(false);
 
     if (addBtn) {
@@ -139,4 +196,5 @@
     window.app.setTodoVisibility = setTodoVisibility;
     window.app.renderTasks = renderTasks;
     window.app.setAccessToken = setAccessToken;
+    window.app.setCurrentUser = setCurrentUser;
 })();

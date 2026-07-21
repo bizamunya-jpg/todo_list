@@ -28,7 +28,11 @@
             }
 
             if (window.app && typeof window.app.showTodoView === "function") {
-                window.app.currentUser = username;
+                if (typeof window.app.setCurrentUser === "function") {
+                    window.app.setCurrentUser(username);
+                } else {
+                    window.app.currentUser = username;
+                }
                 const token = `token-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
                 window.app.accessToken = token;
                 if (typeof window.localStorage !== "undefined") {
