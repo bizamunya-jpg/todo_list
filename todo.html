@@ -1,8 +1,9 @@
 <!Doctype html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TO DO LIST</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -10,15 +11,46 @@
 <body>
     <div class="to-do app">
         <h1>My To Do</h1>
-        <div id="authContainer"></div>
-        <script src="login.js"></script>
-        <script src="register.js"></script>
+        <div id="authContainer">
+            <div id="loginView" class="auth-view">
+                <h2>Login</h2>
+                <form id="loginForm" class="auth-form">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <button type="submit">Log in</button>
+                </form>
+                <button type="button" id="showRegisterBtn" class="register-btn">Create account</button>
+            </div>
+
+            <div id="registerView" class="auth-view" hidden>
+                <h2>Register</h2>
+                <form id="registerForm" class="auth-form">
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" required>
+                    <label for="regUsername">Username</label>
+                    <input type="text" id="regUsername" name="regUsername" required>
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" name="regPassword" required>
+                    <button type="submit">Register</button>
+                </form>
+                <button type="button" id="backToLoginBtn">Back to login</button>
+            </div>
+
+            <div id="todoView" class="auth-view" hidden>
+                <p id="welcomeMessage" class="welcome"></p>
+            </div>
+        </div>
+
         <div class="input-row">
-            <input type="text" id="taskinput" placholder="add a new task">
-            <button id="addBtn">Add</button>
+            <input type="text" id="taskinput" title="Task input" placeholder="add a new task">
+            <button id="addBtn" type="button">Add</button>
         </div>
         <ul id="tasklist"></ul>
     </div>
+    <script src="login.js"></script>
+    <script src="register.js"></script>
     <script src="lists.js"></script>
 </body>
 

@@ -5,6 +5,10 @@
     const addBtn = document.getElementById("addBtn");
     const taskList = document.getElementById("tasklist");
     const inputRow = document.querySelector(".input-row");
+    const welcomeMessage = document.getElementById("welcomeMessage");
+    const loginView = document.getElementById("loginView");
+    const registerView = document.getElementById("registerView");
+    const todoView = document.getElementById("todoView");
     const tasks = [];
     const storageKeys = {
         tasks: "todoTasks",
@@ -74,6 +78,15 @@
         loadTasks();
     }
 
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
     function setTodoVisibility(isVisible) {
         if (inputRow) {
             inputRow.style.display = isVisible ? "flex" : "none";
@@ -94,52 +107,58 @@
             return;
         }
 
-        taskList.innerHTML = "";
+        taskList.innerHTML = tasks.map((task, index) => `
+            <li class="${task.completed ? "completed" : ""}">
+                <input type="checkbox" class="task-checkbox" data-index="${index}" ${task.completed ? "checked" : ""}>
+                <span>${escapeHtml(task.text)}</span>
+                <button type="button" class="update-btn" data-action="update" data-index="${index}">Update</button>
+                <button type="button" class="delete-btn" data-action="delete" data-index="${index}">Delete</button>
+            </li>
+        `).join("");
+    }
 
-        tasks.forEach((task, index) => {
-            const li = document.createElement("li");
-            if (task.completed) {
-                li.classList.add("completed");
-            }
+    function handleTaskChange(event) {
+        const checkbox = event.target.closest(".task-checkbox");
+        if (!checkbox) {
+            return;
+        }
 
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.checked = task.completed;
-            checkbox.addEventListener("change", () => {
-                tasks[index].completed = checkbox.checked;
-                saveTasks();
-                renderTasks();
-            });
+        const index = Number(checkbox.dataset.index);
+        if (!Number.isNaN(index) && tasks[index]) {
+            tasks[index].completed = checkbox.checked;
+            saveTasks();
+            renderTasks();
+        }
+    }
 
-            const span = document.createElement("span");
-            span.textContent = task.text;
+    function handleTaskClick(event) {
+        const button = event.target.closest("button[data-action]");
+        if (!button) {
+            return;
+        }
 
-            const updateBtn = document.createElement("button");
-            updateBtn.className = "update-btn";
-            updateBtn.textContent = "Update";
-            updateBtn.addEventListener("click", () => {
-                const updatedText = prompt("Update task", task.text);
-                if (updatedText !== null) {
-                    const trimmedText = updatedText.trim();
-                    if (trimmedText) {
-                        tasks[index].text = trimmedText;
-                        saveTasks();
-                        renderTasks();
-                    }
+        const index = Number(button.dataset.index);
+        if (Number.isNaN(index) || !tasks[index]) {
+            return;
+        }
+
+        if (button.dataset.action === "delete") {
+            tasks.splice(index, 1);
+            saveTasks();
+            renderTasks();
+        }
+
+        if (button.dataset.action === "update") {
+            const updatedText = prompt("Update task", tasks[index].text);
+            if (updatedText !== null) {
+                const trimmedText = updatedText.trim();
+                if (trimmedText) {
+                    tasks[index].text = trimmedText;
+                    saveTasks();
+                    renderTasks();
                 }
-            });
-
-            const deleteBtn = document.createElement("button");
-            deleteBtn.textContent = "Delete";
-            deleteBtn.addEventListener("click", () => {
-                tasks.splice(index, 1);
-                saveTasks();
-                renderTasks();
-            });
-
-            li.append(checkbox, span, updateBtn, deleteBtn);
-            taskList.appendChild(li);
-        });
+            }
+        }
     }
 
     function addTask() {
@@ -161,16 +180,18 @@
     }
 
     function showTodoView() {
-        const authContainer = document.getElementById("authContainer");
-        if (!authContainer) {
-            return;
+        if (loginView) {
+            loginView.hidden = true;
         }
-
-        authContainer.innerHTML = "";
-        const welcome = document.createElement("p");
-        welcome.className = "welcome";
-        welcome.textContent = `Welcome, ${window.app.currentUser}!`;
-        authContainer.appendChild(welcome);
+        if (registerView) {
+            registerView.hidden = true;
+        }
+        if (todoView) {
+            todoView.hidden = false;
+        }
+        if (welcomeMessage) {
+            welcomeMessage.textContent = `Welcome, ${window.app.currentUser}!`;
+        }
 
         setTodoVisibility(true);
         renderTasks();
@@ -178,6 +199,11 @@
 
     restoreSession();
     setTodoVisibility(false);
+
+    if (taskList) {
+        taskList.addEventListener("change", handleTaskChange);
+        taskList.addEventListener("click", handleTaskClick);
+    }
 
     if (addBtn) {
         addBtn.addEventListener("click", addTask);
