@@ -1,7 +1,11 @@
 (function() {
     "use strict";
 
-    const authContainer = document.getElementById("authContainer");
+    const loginView = document.getElementById("loginView");
+    const registerView = document.getElementById("registerView");
+    const todoView = document.getElementById("todoView");
+    const loginForm = document.getElementById("loginForm");
+    const showRegisterBtn = document.getElementById("showRegisterBtn");
 
     function getStoredUsers() {
         if (typeof window.localStorage === "undefined") {
@@ -17,23 +21,32 @@
         }
     }
 
-    function showLoginView() {
-        if (!authContainer) {
-            return;
+    function showAuthView(view) {
+        if (loginView) {
+            loginView.hidden = view !== "login";
         }
+        if (registerView) {
+            registerView.hidden = view !== "register";
+        }
+        if (todoView) {
+            todoView.hidden = view !== "todo";
+        }
+    }
 
-        authContainer.innerHTML = "";
+    function showLoginView() {
+        showAuthView("login");
+        const usernameInput = document.getElementById("username");
+        if (usernameInput) {
+            usernameInput.focus();
+        }
+    }
 
-        const heading = document.createElement("h2");
-        heading.textContent = "Login";
-
-        const form = document.createElement("form");
-        form.className = "auth-form";
-        form.addEventListener("submit", (event) => {
+    if (loginForm) {
+        loginForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
-            const username = form.querySelector("#username").value.trim();
-            const password = form.querySelector("#password").value.trim();
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
 
             if (!username || !password) {
                 alert("Please enter both your username and password.");
@@ -65,43 +78,14 @@
                 window.app.showTodoView();
             }
         });
+    }
 
-        const usernameLabel = document.createElement("label");
-        usernameLabel.textContent = "Username";
-        usernameLabel.setAttribute("for", "username");
-
-        const usernameInput = document.createElement("input");
-        usernameInput.type = "text";
-        usernameInput.id = "username";
-        usernameInput.name = "username";
-        usernameInput.required = true;
-
-        const passwordLabel = document.createElement("label");
-        passwordLabel.textContent = "Password";
-        passwordLabel.setAttribute("for", "password");
-
-        const passwordInput = document.createElement("input");
-        passwordInput.type = "password";
-        passwordInput.id = "password";
-        passwordInput.name = "password";
-        passwordInput.required = true;
-
-        const submitBtn = document.createElement("button");
-        submitBtn.type = "submit";
-        submitBtn.textContent = "Log in";
-
-        const registerBtn = document.createElement("button");
-        registerBtn.type = "button";
-        registerBtn.className = "register-btn";
-        registerBtn.textContent = "Create account";
-        registerBtn.addEventListener("click", () => {
+    if (showRegisterBtn) {
+        showRegisterBtn.addEventListener("click", () => {
             if (window.app && typeof window.app.showRegistrationView === "function") {
                 window.app.showRegistrationView();
             }
         });
-
-        form.append(usernameLabel, usernameInput, passwordLabel, passwordInput, submitBtn);
-        authContainer.append(heading, form, registerBtn);
     }
 
     window.app = window.app || {};

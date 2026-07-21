@@ -1,7 +1,11 @@
 (function() {
     "use strict";
 
-    const authContainer = document.getElementById("authContainer");
+    const loginView = document.getElementById("loginView");
+    const registerView = document.getElementById("registerView");
+    const todoView = document.getElementById("todoView");
+    const registerForm = document.getElementById("registerForm");
+    const backToLoginBtn = document.getElementById("backToLoginBtn");
 
     function getStoredUsers() {
         if (typeof window.localStorage === "undefined") {
@@ -28,23 +32,28 @@
     }
 
     function showRegistrationView() {
-        if (!authContainer) {
-            return;
+        if (loginView) {
+            loginView.hidden = true;
         }
+        if (registerView) {
+            registerView.hidden = false;
+        }
+        if (todoView) {
+            todoView.hidden = true;
+        }
+        const emailInput = document.getElementById("email");
+        if (emailInput) {
+            emailInput.focus();
+        }
+    }
 
-        authContainer.innerHTML = "";
-
-        const heading = document.createElement("h2");
-        heading.textContent = "Register";
-
-        const form = document.createElement("form");
-        form.className = "auth-form";
-        form.addEventListener("submit", (event) => {
+    if (registerForm) {
+        registerForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
-            const email = form.querySelector("#email").value.trim();
-            const username = form.querySelector("#regUsername").value.trim();
-            const password = form.querySelector("#regPassword").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const username = document.getElementById("regUsername").value.trim();
+            const password = document.getElementById("regPassword").value.trim();
 
             if (!email || !username || !password) {
                 alert("Please fill in all registration fields.");
@@ -82,52 +91,14 @@
                 window.app.showTodoView();
             }
         });
+    }
 
-        const emailLabel = document.createElement("label");
-        emailLabel.textContent = "Email";
-        emailLabel.setAttribute("for", "email");
-
-        const emailInput = document.createElement("input");
-        emailInput.type = "text";
-        emailInput.id = "email";
-        emailInput.name = "email";
-        emailInput.required = true;
-
-        const usernameLabel = document.createElement("label");
-        usernameLabel.textContent = "Username";
-        usernameLabel.setAttribute("for", "regUsername");
-
-        const usernameInput = document.createElement("input");
-        usernameInput.type = "text";
-        usernameInput.id = "regUsername";
-        usernameInput.name = "regUsername";
-        usernameInput.required = true;
-
-        const passwordLabel = document.createElement("label");
-        passwordLabel.textContent = "Password";
-        passwordLabel.setAttribute("for", "regPassword");
-
-        const passwordInput = document.createElement("input");
-        passwordInput.type = "password";
-        passwordInput.id = "regPassword";
-        passwordInput.name = "regPassword";
-        passwordInput.required = true;
-
-        const submitBtn = document.createElement("button");
-        submitBtn.type = "submit";
-        submitBtn.textContent = "Register";
-
-        const backBtn = document.createElement("button");
-        backBtn.type = "button";
-        backBtn.textContent = "Back to login";
-        backBtn.addEventListener("click", () => {
+    if (backToLoginBtn) {
+        backToLoginBtn.addEventListener("click", () => {
             if (window.app && typeof window.app.showLoginView === "function") {
                 window.app.showLoginView();
             }
         });
-
-        form.append(emailLabel, emailInput, usernameLabel, usernameInput, passwordLabel, passwordInput, submitBtn);
-        authContainer.append(heading, form, backBtn);
     }
 
     window.app = window.app || {};
