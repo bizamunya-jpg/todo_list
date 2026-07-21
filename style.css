@@ -5,7 +5,7 @@ body {
     min-height: 100vh;
     margin: 0;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #2563eb 45%, #38bdf8 100%);
+    background: linear-gradient(135deg, #080b13 0%, #e6e7e9 45%, #9ccde2 100%);
     color: #0f172a;
 }
 
@@ -14,7 +14,8 @@ body {
     background: rgba(255, 255, 255, 0.96);
     padding: 28px 24px;
     border-radius: 20px;
-    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22);
+    box-shadow: 0 20px 45px rgba(241, 243, 247, 0.22);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
 }
 
@@ -56,7 +57,7 @@ h1 {
 
 .auth-form input:focus,
 #taskinput:focus {
-    border-color: #2563eb;
+    border-color: #babfca;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
@@ -81,7 +82,7 @@ li button:hover {
 
 .auth-form button,
 #addBtn {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    background: linear-gradient(135deg, #414349, #1d4ed8);
     color: #fff;
 }
 
@@ -167,12 +168,12 @@ li button {
     color: #fff;
 }
 
-li button:not(.update-btn) {
-    background: #ef4444;
+li button:not(.delete-btn) {
+    background: #f57c64;
 }
 
 li button.update-btn {
-    background: #f59e0b;
+    background: #7bd785;
 }
 
 @media (max-width: 480px) {
